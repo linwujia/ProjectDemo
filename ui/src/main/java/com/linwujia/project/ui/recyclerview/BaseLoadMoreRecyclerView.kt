@@ -98,7 +98,7 @@ open class BaseLoadMoreRecyclerView @JvmOverloads constructor(
     }
 
     @CallSuper
-    protected fun onLoadMoreCompleted() {
+    protected open fun onLoadMoreCompleted() {
         mState = STATUS_IDLE
         for (l in mOnLoadMoreListener) {
             l.onLoadMoreCompleted()
@@ -111,7 +111,7 @@ open class BaseLoadMoreRecyclerView @JvmOverloads constructor(
     }
 
     @CallSuper
-    protected fun onLoadMore() {
+    protected open fun onLoadMore() {
         mState = STATUS_ON_LOAD_MORE
         mInterceptLoadMore = true
         for (l in mOnLoadMoreListener) {
