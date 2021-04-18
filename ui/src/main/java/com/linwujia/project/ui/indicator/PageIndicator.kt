@@ -14,12 +14,12 @@ interface PageIndicator {
     /**
      * Bind the indicator to a ViewPager.
      */
-    fun setViewPager(view: ViewPager?)
+    fun setupViewPager(view: ViewPager?)
 
     /**
      * Bind the indicator to a ViewPager.
      */
-    fun setViewPager(view: ViewPager?, initialPosition: Int)
+    fun setupViewPager(view: ViewPager?, initialPosition: Int)
 
     /**
      * Set a page change listener which will receive forwarded events.
@@ -158,7 +158,7 @@ interface PageIndicator {
         abstract fun getItemCount() : Int
     }
 
-    public abstract class ViewHolder(val itemView: View) {
+    abstract class ViewHolder(val itemView: View) {
 
     }
 }

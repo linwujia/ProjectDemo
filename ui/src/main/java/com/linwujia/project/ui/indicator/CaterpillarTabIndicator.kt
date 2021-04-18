@@ -51,9 +51,8 @@ class CaterpillarTabIndicator(context: Context, attrs: AttributeSet) : TabPageIn
         mDirty.set(0, dirtyTop, width, dirtyTop + mCaterpillarHeight)
     }
 
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+    override fun onDrawForeground(canvas: Canvas) {
+        super.onDrawForeground(canvas)
         drawCaterpillar(canvas)
     }
 

@@ -30,7 +30,7 @@ class TabPageIndicatorAdapter : PageIndicator.Adapter<TabPageIndicatorAdapter.Ta
             typeface = if (isSelected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
         }
 
-        viewHolder.itemView.setBackgroundColor(if (isSelected) Color.WHITE else Color.GRAY)
+        //viewHolder.itemView.setBackgroundColor(if (isSelected) Color.WHITE else Color.GRAY)
     }
 
     override fun getItemCount(): Int {

@@ -5,13 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.linwujia.project.base.NullPresenterActivity
 import com.linwujia.project.ui.indicator.PageIndicator
 import com.linwujia.project.ui.indicator.TabPageIndicator
 import com.linwujia.project.ui.indicator.VerticalTabPageIndicator
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : NullPresenterActivity() {
     private lateinit var mTabIndicator: VerticalTabPageIndicator
     private lateinit var mAdapter: TabPageIndicatorAdapter
     private lateinit var mViewPager: ViewPager
@@ -21,12 +23,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         mTabIndicator = findViewById(R.id.indicator)
+        mTabIndicator.onPageScrolledListener { position, positionOffset, _ ->
+            val leftViewHolder = mTabIndicator.getViewHolderAtPosition(position) as TabPageIndicatorAdapter.TabPageIndicatorViewHolder
+            if (positionOffset > 0f) {
+                val rightViewHolder = mTabIndicator.getViewHolderAtPosition(position + 1) as TabPageIndicatorAdapter.TabPageIndicatorViewHolder
+                rightViewHolder.mTitleView?.textSize = 15 + 5 * positionOffset
+            }
+            leftViewHolder.mTitleView?.textSize = 15 + 5 * (1 - positionOffset)
+        }
         mViewPager = findViewById(R.id.viewPager)
 
         initAdapter()
         mViewPager.adapter = mViewPagerAdapter
         mTabIndicator.mAdapter = mAdapter
-        mTabIndicator.setViewPager(mViewPager)
+        mTabIndicator.setupViewPager(mViewPager)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
     }
 
     private fun initAdapter() {

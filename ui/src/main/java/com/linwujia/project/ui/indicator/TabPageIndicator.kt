@@ -26,22 +26,32 @@ open class TabPageIndicator(context: Context, attrs: AttributeSet? = null) : Hor
 
     private var mTabSelector: Runnable? = null
 
-    private var mOnPageScrolledListener: ((position: Int, positionOffset: Float, positionOffsetPixels: Int) -> Unit)? = null
-    private var mOnPageSelectedListener: ((position: Int) -> Unit)? = null
-    private var mOnPageScrollStateChangedListener: ((state: Int) -> Unit)? = null
+    private val mOnPageScrolledListeners: MutableList<(position: Int, positionOffset: Float, positionOffsetPixels: Int) -> Unit> by lazy {
+        arrayListOf<(position: Int, positionOffset: Float, positionOffsetPixels: Int) -> Unit>()
+    }
+    private val mOnPageSelectedListeners: MutableList<(position: Int) -> Unit> by lazy {
+        arrayListOf<(position: Int) -> Unit>()
+    }
+    private val mOnPageScrollStateChangedListeners: MutableList<(state: Int) -> Unit> by lazy {
+        arrayListOf<(state: Int) -> Unit>()
+    }
     private var mOnPageChangedListener: ViewPager.OnPageChangeListener? = null
 
-    private var mOnTabSelectedListener: ((Int) -> Unit)? = null
-    private var mOnTabReselectedListener: ((Int) -> Unit)? = null
+    private val mOnTabSelectedListeners: MutableList<(Int) -> Unit> by lazy {
+        arrayListOf<(Int) -> Unit>()
+    }
+    private val mOnTabReselectedListeners: MutableList<(Int) -> Unit> by lazy {
+        arrayListOf<(Int) -> Unit>()
+    }
 
     private val mInternalOnPageChangedListener: TabPageOnPageChangedListener = TabPageOnPageChangedListener()
     private val mOnTabClickListener = OnClickListener {
         val position: Int = it.getTag(R.integer.tab_page_indicator_position) as Int
         if (mSelectedTabIndex == position) {
-            mOnTabReselectedListener?.invoke(position)
+            dispatchOnTabSelected(position)
         }
 
-        mOnTabSelectedListener?.invoke(position)
+        dispatchOnTabReselected(position)
         moveToPage(position)
     }
 
@@ -100,11 +110,11 @@ open class TabPageIndicator(context: Context, attrs: AttributeSet? = null) : Hor
         }
     }
 
-    override fun setViewPager(view: ViewPager?) {
-        setViewPager(view, view?.currentItem ?: 0)
+    override fun setupViewPager(view: ViewPager?) {
+        setupViewPager(view, view?.currentItem ?: 0)
     }
 
-    override fun setViewPager(view: ViewPager?, initialPosition: Int) {
+    override fun setupViewPager(view: ViewPager?, initialPosition: Int) {
         mViewPager = view
         moveToPage(initialPosition)
     }
@@ -114,23 +124,28 @@ open class TabPageIndicator(context: Context, attrs: AttributeSet? = null) : Hor
     }
 
     override fun onPageScrolledListener(listener: (position: Int, positionOffset: Float, positionOffsetPixels: Int) -> Unit) {
-        mOnPageScrolledListener = listener
+        mOnPageScrolledListeners
+        mOnPageScrolledListeners.add(listener)
     }
 
     override fun onPageSelectedListener(listener: (position: Int) -> Unit) {
-        mOnPageSelectedListener = listener
+        mOnPageSelectedListeners
+        mOnPageSelectedListeners.add(listener)
     }
 
     override fun onPageScrollStateChangedListener(listener: (state: Int) -> Unit) {
-        mOnPageScrollStateChangedListener = listener
+        mOnPageScrollStateChangedListeners
+        mOnPageScrollStateChangedListeners.add(listener)
     }
 
     override fun onTabSelectedListener(listener: (Int) -> Unit) {
-        mOnTabSelectedListener = listener
+        mOnTabSelectedListeners
+        mOnTabSelectedListeners.add(listener)
     }
 
     override fun onTabReselectedListener(listener: (Int) -> Unit) {
-        mOnTabReselectedListener = listener
+        mOnTabReselectedListeners
+        mOnTabReselectedListeners.add(listener)
     }
 
     override fun notifyDataSetChanged() {
@@ -198,7 +213,37 @@ open class TabPageIndicator(context: Context, attrs: AttributeSet? = null) : Hor
         return null
     }
 
+    private fun dispatchOnTabSelected(position: Int) {
+        mOnTabSelectedListeners.forEach { listener ->
+            listener(position)
+        }
+    }
 
+    private fun dispatchOnTabReselected(position: Int) {
+        mOnTabReselectedListeners.forEach { listener ->
+            listener(position)
+        }
+    }
+
+    private fun dispatchOnPageScrollStateChanged(state: Int) {
+        mOnPageScrollStateChangedListeners.forEach { listener ->
+            listener(state)
+        }
+    }
+
+    private fun dispatchOnPageScrolled(position: Int,
+                                       positionOffset: Float,
+                                       positionOffsetPixels: Int) {
+        mOnPageScrolledListeners.forEach { listener ->
+            listener(position, positionOffset, positionOffsetPixels)
+        }
+    }
+
+    private fun dispatchOnPageSelected(position: Int) {
+        mOnPageSelectedListeners.forEach { listener ->
+            listener(position)
+        }
+    }
 
     private inner class TabPageIndicatorDataObserver : PageIndicator.AdapterDataObserver {
         override fun onChanged() {
@@ -209,7 +254,7 @@ open class TabPageIndicator(context: Context, attrs: AttributeSet? = null) : Hor
     private inner class TabPageOnPageChangedListener : ViewPager.OnPageChangeListener {
         override fun onPageScrollStateChanged(state: Int) {
             mOnPageChangedListener?.onPageScrollStateChanged(state)
-            mOnPageScrollStateChangedListener?.invoke(state)
+            dispatchOnPageScrollStateChanged(state)
         }
 
         override fun onPageScrolled(
@@ -218,12 +263,12 @@ open class TabPageIndicator(context: Context, attrs: AttributeSet? = null) : Hor
             positionOffsetPixels: Int
         ) {
             mOnPageChangedListener?.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            mOnPageScrolledListener?.invoke(position, positionOffset, positionOffsetPixels)
+            dispatchOnPageScrolled(position, positionOffset, positionOffsetPixels)
         }
 
         override fun onPageSelected(position: Int) {
             mOnPageChangedListener?.onPageSelected(position)
-            mOnPageSelectedListener?.invoke(position)
+            dispatchOnPageSelected(position)
             moveToPage(position)
         }
     }
