@@ -154,6 +154,34 @@ open class HeaderFooterRecyclerView @JvmOverloads constructor(
 
     private class RecyclerHeaderFooterAdapter(context: Context, adapter: Adapter<RecyclerView.ViewHolder>?) : Adapter<RecyclerView.ViewHolder>() {
 
+        /*init {
+            adapter?.registerAdapterDataObserver(object : AdapterDataObserver(){
+                override fun onChanged() {
+                    this@RecyclerHeaderFooterAdapter.notifyDataSetChanged()
+                }
+
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+                    this@RecyclerHeaderFooterAdapter.notifyItemRangeChanged(positionStart, itemCount)
+                }
+
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+                    this@RecyclerHeaderFooterAdapter.notifyItemRangeChanged(positionStart, itemCount, payload)
+                }
+
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    this@RecyclerHeaderFooterAdapter.notifyItemRangeInserted(positionStart, itemCount)
+                }
+
+                override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                    this@RecyclerHeaderFooterAdapter.notifyItemRangeRemoved(positionStart, itemCount)
+                }
+
+                override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                    this@RecyclerHeaderFooterAdapter.notifyItemMoved(fromPosition, toPosition)
+                }
+            })
+        }*/
+
         private val mHeaderView: LinearLayout = WrapContentLinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         private val mFooterView: LinearLayout = WrapContentLinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
 
@@ -238,7 +266,7 @@ open class HeaderFooterRecyclerView @JvmOverloads constructor(
 
         override fun getItemId(position: Int): Long {
             return when(position) {
-                0, 1 -> -1
+                0, itemCount - 1 -> -1
                 else -> mWrappedAdapter?.getItemId(position -1) ?: 0
             }
         }
@@ -250,7 +278,7 @@ open class HeaderFooterRecyclerView @JvmOverloads constructor(
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder.itemViewType != VIEW_TYPE_HEAD && holder.itemViewType != VIEW_TYPE_FOOT) {
-                mWrappedAdapter?.onBindViewHolder(holder, position)
+                mWrappedAdapter?.onBindViewHolder(holder, position - 1)
             }
         }
 
@@ -260,7 +288,7 @@ open class HeaderFooterRecyclerView @JvmOverloads constructor(
             payloads: MutableList<Any>
         ) {
             if (holder.itemViewType != VIEW_TYPE_HEAD && holder.itemViewType != VIEW_TYPE_FOOT) {
-                mWrappedAdapter?.onBindViewHolder(holder, position, payloads)
+                mWrappedAdapter?.onBindViewHolder(holder, position - 1, payloads)
             }
         }
 
@@ -268,7 +296,7 @@ open class HeaderFooterRecyclerView @JvmOverloads constructor(
             return when(position) {
                 0 -> VIEW_TYPE_HEAD
                 itemCount - 1 -> VIEW_TYPE_FOOT
-                else -> mWrappedAdapter?.getItemViewType(position) ?: super.getItemViewType(position)
+                else -> mWrappedAdapter?.getItemViewType(position - 1) ?: super.getItemViewType(position)
             }
         }
 

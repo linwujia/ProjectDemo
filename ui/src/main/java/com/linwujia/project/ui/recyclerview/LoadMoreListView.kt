@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 
-class LoadMoreListView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+class LoadMoreListView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     BaseLoadMoreRecyclerView(context, attrs, defStyleAttr) {
 
     private var mEmptyViewHolder: EmptyViewHolder? = null

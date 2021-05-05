@@ -27,7 +27,7 @@ abstract class RefreshLoadMoreActivity<P : IContract.IPresenter<IContract.IView,
 
     abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
 
-    abstract fun onBindViewHolder(holder: VH, position: Int)
+    abstract fun onBindViewHolder(holder: VH, position: Int, data: DataType)
 
     abstract fun onRefresh()
 

@@ -15,7 +15,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/viewPager"/>
 
-    <com.linwujia.project.demo.VerticalViewPager
+    <com.linwujia.project.demo.tab.VerticalViewPager
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="match_parent"

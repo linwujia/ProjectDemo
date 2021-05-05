@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 class RefreshLoadMoreAdapter<VH : RecyclerView.ViewHolder, DataType>(private val viewHolderCreator: (parent: ViewGroup, viewType: Int) -> VH, data: List<DataType>? = null) : RecyclerView.Adapter<VH>() {
 
     private val mData = arrayListOf<DataType>()
-    private var mOnBindViewHolder: ((holder: VH, position: Int) -> Unit)? = null
+    private var mOnBindViewHolder: ((holder: VH, position: Int, data: DataType) -> Unit)? = null
 
     init {
         mData.clear()
@@ -20,7 +20,7 @@ class RefreshLoadMoreAdapter<VH : RecyclerView.ViewHolder, DataType>(private val
     override fun getItemCount() = mData.size
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        mOnBindViewHolder?.invoke(holder, position)
+        mOnBindViewHolder?.invoke(holder, position, mData[position])
     }
 
     fun notifyDataSetChanged(data: List<DataType>) {
@@ -31,8 +31,9 @@ class RefreshLoadMoreAdapter<VH : RecyclerView.ViewHolder, DataType>(private val
         }
     }
 
-    fun onBindViewHolder(onBindViewHolder: (holder: VH, position: Int) -> Unit) {
+    fun onBindViewHolder(onBindViewHolder: (holder: VH, position: Int, data: DataType) -> Unit) {
         mOnBindViewHolder = onBindViewHolder
     }
 
+    fun getItemData(position: Int): DataType = mData[position]
 }
